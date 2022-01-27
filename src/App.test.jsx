@@ -26,9 +26,9 @@ const server = setupServer(
   rest.get(`https://uzgiamkrbapxufnwdrja.supabase.co/rest/v1/users`, (req, res, ctx) => {
     const select = req.url.searchParams.get('select')
     if (select === '*') {
-      return res()
+      return res(ctx.json([user]))
     }
-    return res(ctx.json(user))
+    return res(ctx.status(500))
   })
 )
 // 🚨 Listen for server start
@@ -63,7 +63,15 @@ test('Should render the header with Sasuke 🌬️🔥', async () => {
   }
 
   // 🚨 Use the server to change the response for this test
-
+  server.use(
+    rest.get(`https://uzgiamkrbapxufnwdrja.supabase.co/rest/v1/users`, (req, res, ctx) => {
+      const select = req.url.searchParams.get('select')
+      if (select === '*') {
+        return res(ctx.json([sasuke]))
+      }
+      return res(ctx.status(500))
+    })
+  )
   render(<App />)
 
   const profileName = await screen.findByText(sasuke.name)
